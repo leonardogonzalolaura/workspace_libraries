@@ -8,9 +8,12 @@ class IStorage(ABC):
         pass
 
     @abstractmethod
-    def put(self,path:str,name:str,object:Union[str,Dict[str,Any]]):
+    def put(self,path:str,name:str):
         pass
-
+    
+    @abstractmethod
+    def put_object(self,path:str,name:str,object:Union[str,Dict[str,Any]]):
+        pass
     @abstractmethod
     def list(self,path:str):
         pass
