@@ -87,17 +87,18 @@ class client(IStorage):
     aws_secret_access_key:Optional[str]=None
     region_name:Optional[str]=None
     bucket_name:Optional[str]=None
-    s3_client: boto3.Session.client = field(init=False, default=None)
+    s3_client: boto3.Session.client = field(init=True, default=None)
 
     def __post_init__(self):
         self.__call__()
 
     def __call__(self):
-        self.s3_client = boto3.Session(
-            aws_access_key_id = self.aws_access_key_id,
-            aws_secret_access_key = self.aws_secret_access_key,
-            region_name = self.region_name
-        ).client('s3')
+        if self.s3_client is None:
+            self.s3_client = boto3.Session(
+                aws_access_key_id = self.aws_access_key_id,
+                aws_secret_access_key = self.aws_secret_access_key,
+                region_name = self.region_name
+            ).client('s3')
         self.console = Console()
 
     def get(self, path:str, name:str)-> Union[str, pl.DataFrame, pl.DataFrame, Dict[str, Any]]:
@@ -210,6 +211,31 @@ class client(IStorage):
         return _list
         
     def put(self,path:str,name:str):
+        """
+        Uploads a file to the specified S3 bucket.
+
+        **Parameters:**
+        - **`path`** (str): 
+        The local path to the file to be uploaded.
+        - **`name`** (str): 
+        The name (key) under which the file will be stored in the S3 bucket.
+
+        **Returns:**
+        None
+
+        **Example:**
+        >>> s3_client = client(
+        >>>     aws_access_key_id='your_access_key_id',
+        >>>     aws_secret_access_key='your_secret_access_key',
+        >>>     region_name='us-west-1',
+        >>>     bucket_name='my-bucket'
+        >>> )
+        >>> s3_client.put('/local/path/to/file.txt', 'uploaded_file.txt')
+
+        # This will upload the file 'file.txt' from the local directory to the S3 bucket
+        # and store it as 'uploaded_file.txt' in the bucket.
+        """
+        self.console.log(f"[cyan]Uploading file:[/cyan] [green]{path}[/green] to bucket [green]{self.bucket_name}[/green] with key [green]{name}[/green]")
         self.s3_client.upload_file(path, self.bucket_name, name)
 
     def put_object(self, path: str, name: str, _object: str | Dict[str, Any]) ->str:

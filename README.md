@@ -29,7 +29,8 @@ pip install boto3 polars
 
 ### Initialization
 
-Create an instance of the `awss3gonla` class with your AWS credentials and bucket name:
+Create an instance of the `awss3gonla` class with your AWS credentials and bucket name. You can provide the AWS credentials and bucket name directly or let the `boto3` session manage them using the default configuration.
+
 
 ```python
 import awss3gonla
@@ -41,32 +42,107 @@ s3 = awss3gonla.client(
     bucket_name='your_bucket_name'
 )
 ```
+Alternatively, if you already have an s3_client created, you can pass it directly:
 
+```python
+import boto3
+from awss3gonla import client
+
+existing_s3_client = boto3.client('s3')
+
+s3 = client(
+    s3_client=existing_s3_client,
+    bucket_name='your_bucket_name'
+)
+```
 ## Methods
-### get(path: str, name: str)
 
-Placeholder method for future implementation to retrieve an object from S3. Currently not implemented.
+## `get(path: str, name: str)`
+
+### Description
+
+Retrieves an object from S3 and returns its content based on the file type.
+
+### Arguments
+
+- `path` (str): The path to the object within the S3 bucket.
+- `name` (str): The name of the object to retrieve.
+
+### Returns
+
+- `Union[str, pl.DataFrame, Dict[str, Any]]`: The content of the object, which could be:
+  - a string for text files,
+  - a Polars DataFrame for CSV files,
+  - a dictionary for JSON files,
+  - a Polars DataFrame for Parquet files.
+
+### Example
 
 ```python
-# Example usage (not implemented):
-s3.get('path/to/object', 'object_name')
+# Initialize S3Storage
+s3_storage = S3Storage(bucket_name='my-s3-bucket')
+
+# Example 1: Retrieve a text file
+text_content = s3_storage.get('path/to/your/object', 'example.txt')
+print("Text File Content:")
+print(text_content)
+
+# Example 2: Retrieve a CSV file and print the Polars DataFrame
+csv_df = s3_storage.get('path/to/your/object', 'example.csv')
+print("\nCSV File DataFrame:")
+print(csv_df)
+
+# Example 3: Retrieve a JSON file
+json_content = s3_storage.get('path/to/your/object', 'example.json')
+print("\nJSON File Content:")
+print(json_content)
+
+# Example 4: Retrieve a Parquet file and print the Polars DataFrame
+parquet_df = s3_storage.get('path/to/your/object', 'example.parquet')
+print("\nParquet File DataFrame:")
+print(parquet_df)
 ```
 
-### list(path: str)
-Lists objects in the specified S3 path.
+## `list(path: str)`
+
+### Description
+
+Lists objects in an S3 bucket under a specified prefix.
+
+This method retrieves a list of objects in the S3 bucket that match the specified prefix. It logs the progress of 
+the operation and returns a dictionary containing metadata about the listed objects.
+
+### Arguments
+
+- `path` (str): The prefix path for filtering the objects in the S3 bucket.
+
+### Returns
+
+- `Dict[str, Any]`: A dictionary containing the response from the S3 `list_objects_v2` call. This typically includes 
+  metadata such as 'Contents', 'Bucket', and 'Prefix'.
+
+### Examples
+
 ```python
-objects = s3.list('some/path/')
-print(objects)
+# Initialize S3Storage
+s3_storage = S3Storage(bucket_name='my-s3-bucket')
+
+# Example: List objects under a prefix
+response = s3_storage.list('path/to/prefix/')
+print(response)
+# Output:
+# {'Contents': [{'Key': 'path/to/prefix/file1.txt', 'Size': 1234}, {'Key': 'path/to/prefix/file2.txt', 'Size': 5678}],
+#  'Bucket': 'my-bucket', 'Prefix': 'path/to/prefix/'}
 ```
 
-### put(path: str, name: str)
+### `put(path: str, name: str)`
 Uploads a file from the local path to S3.
 
 ```python
 s3.put('local/path/to/file', 'destination/name')
 ```
 
-### put_object(path: str, name: str, _object: str | Dict[str, Any])
+### `put_object(path: str, name: str, _object: str | Dict[str, Any])`
 
 Uploads an object (string or dictionary) to S3. Automatically detects the content type based on the input type.
 
@@ -74,7 +150,7 @@ Uploads an object (string or dictionary) to S3. Automatically detects the conten
 s3.put_object('some/path', 'object_name', 'some string content')
 s3.put_object('some/path', 'object_name', {'key': 'value'})
 ```
-### put_parquet(dataframe: pl.DataFrame, path: str, name: Optional[str] = None, partition_cols: Optional[dict] = None) -> str
+### `put_parquet(dataframe: pl.DataFrame, path: str, name: Optional[str] = None, partition_cols: Optional[dict] = None) -> str`
 Uploads a Polars DataFrame to S3 as a parquet file. Supports partitioning based on specified columns.
 
 ```python
@@ -89,7 +165,7 @@ key = s3.put_parquet(df, 'some/path/', name='optional_name', partition_cols={'co
 print(f"Parquet file uploaded to S3 with key: {key}")
 ```
 
-### list_parquet(path: str)
+### `list_parquet(path: str)`
 Lists parquet files in the specified S3 path.
 
 ```python
@@ -97,7 +173,7 @@ parquet_files = s3.list_parquet('some/path/')
 print(parquet_files)
 ```
 
-### get_objects(path: str, buffer: Any)
+### `get_objects(path: str, buffer: Any)`
 Downloads an object from S3 into a provided buffer.
 
 ```python
@@ -107,7 +183,8 @@ buffer = io.BytesIO()
 s3.get_objects('some/path/to/object', buffer)
 print(buffer.getvalue())
 ```
-### get_parquet_partition(path: str) -> pl.DataFrame
+### `get_parquet_partition(path: str) -> pl.DataFrame`
+
 Retrieves all parquet files from a specified path and combines them into a single Polars DataFrame.
 
 ```python
