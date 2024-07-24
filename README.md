@@ -1,8 +1,8 @@
-# `aws_s3` Library
+# `awss3gonla` Library
 
 ## Overview
 
-The `aws_s3` class provides a Python interface for interacting with AWS S3 storage. It allows for operations such as uploading and downloading files, managing parquet files, and handling data partitions. This class is designed to work with the AWS SDK for Python (`boto3`) and the Polars library for data manipulation.
+The `awss3gonla` class provides a Python interface for interacting with AWS S3 storage. It allows for operations such as uploading and downloading files, managing parquet files, and handling data partitions. This class is designed to work with the AWS SDK for Python (`boto3`) and the Polars library for data manipulation.
 
 ## Features
 
@@ -14,7 +14,7 @@ The `aws_s3` class provides a Python interface for interacting with AWS S3 stora
 
 ## Installation
 
-To use the `aws_s3` class, ensure you have the following dependencies installed:
+To use the `awss3gonla` class, ensure you have the following dependencies installed:
 
 - `boto3`
 - `polars`
@@ -29,12 +29,12 @@ pip install boto3 polars
 
 ### Initialization
 
-Create an instance of the `aws_s3` class with your AWS credentials and bucket name:
+Create an instance of the `awss3gonla` class with your AWS credentials and bucket name:
 
 ```python
-from your_module import aws_s3
+import awss3gonla
 
-s3 = aws_s3(
+s3 = awss3gonla.client(
     aws_access_key_id='your_access_key',
     aws_secret_access_key='your_secret_key',
     region_name='your_region',
@@ -43,13 +43,7 @@ s3 = aws_s3(
 ```
 
 ## Methods
-    __call__
-
-Initializes the S3 client. Call this method after creating an instance:
-
-     s3()
-
-get(path: str, name: str)
+### get(path: str, name: str)
 
 Placeholder method for future implementation to retrieve an object from S3. Currently not implemented.
 
@@ -58,21 +52,21 @@ Placeholder method for future implementation to retrieve an object from S3. Curr
 s3.get('path/to/object', 'object_name')
 ```
 
-list(path: str)
+### list(path: str)
 Lists objects in the specified S3 path.
 ```python
 objects = s3.list('some/path/')
 print(objects)
 ```
 
-put(path: str, name: str)
+### put(path: str, name: str)
 Uploads a file from the local path to S3.
 
 ```python
 s3.put('local/path/to/file', 'destination/name')
 ```
 
-put_object(path: str, name: str, _object: str | Dict[str, Any])
+### put_object(path: str, name: str, _object: str | Dict[str, Any])
 
 Uploads an object (string or dictionary) to S3. Automatically detects the content type based on the input type.
 
@@ -80,7 +74,7 @@ Uploads an object (string or dictionary) to S3. Automatically detects the conten
 s3.put_object('some/path', 'object_name', 'some string content')
 s3.put_object('some/path', 'object_name', {'key': 'value'})
 ```
-put_parquet(dataframe: pl.DataFrame, path: str, name: Optional[str] = None, partition_cols: Optional[dict] = None) -> str
+### put_parquet(dataframe: pl.DataFrame, path: str, name: Optional[str] = None, partition_cols: Optional[dict] = None) -> str
 Uploads a Polars DataFrame to S3 as a parquet file. Supports partitioning based on specified columns.
 
 ```python
@@ -95,7 +89,7 @@ key = s3.put_parquet(df, 'some/path/', name='optional_name', partition_cols={'co
 print(f"Parquet file uploaded to S3 with key: {key}")
 ```
 
-list_parquet(path: str)
+### list_parquet(path: str)
 Lists parquet files in the specified S3 path.
 
 ```python
@@ -103,7 +97,7 @@ parquet_files = s3.list_parquet('some/path/')
 print(parquet_files)
 ```
 
-get_objects(path: str, buffer: Any)
+### get_objects(path: str, buffer: Any)
 Downloads an object from S3 into a provided buffer.
 
 ```python
@@ -113,7 +107,7 @@ buffer = io.BytesIO()
 s3.get_objects('some/path/to/object', buffer)
 print(buffer.getvalue())
 ```
-get_parquet_partition(path: str) -> pl.DataFrame
+### get_parquet_partition(path: str) -> pl.DataFrame
 Retrieves all parquet files from a specified path and combines them into a single Polars DataFrame.
 
 ```python
