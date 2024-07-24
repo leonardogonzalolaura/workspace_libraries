@@ -36,7 +36,7 @@ develop-eggs/
 *.egg-info/
 *.egg/
 *.whl
-
+test.py
 # Virtualenv #
 ##############
 .venv/
