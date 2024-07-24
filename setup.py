@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='awss3gonla',  # Replace with your library name
-    version='0.7',  # Replace with your library version
+    version='0.8',  # Replace with your library version
     packages=find_packages(include=['awss3gonla', 'awss3gonla.*']),
     install_requires=[
         'boto3',  # AWS SDK for Python
