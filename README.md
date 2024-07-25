@@ -1,4 +1,8 @@
-# `awss3gonla` Library
+# Project description
+## awss3gonla
+ [![Upload Python Package to PIP](https://github.com/leonardogonzalolaura/workspace_libraries/actions/workflows/python-publish.yml/badge.svg)](https://github.com/leonardogonzalolaura/workspace_libraries/actions/workflows/python-publish.yml) ![PyPI version](https://img.shields.io/pypi/v/awss3gonla.svg)
+
+
 
 ## Overview
 
