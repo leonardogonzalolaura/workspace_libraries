@@ -14,15 +14,8 @@ The `awss3gonla` class provides a Python interface for interacting with AWS S3 s
 
 ## Installation
 
-To use the `awss3gonla` class, ensure you have the following dependencies installed:
-
-- `boto3`
-- `polars`
-
-You can install these packages using pip:
-
 ```bash
-pip install boto3 polars
+pip install awss3gonla
 ```
 
 ## Usage
